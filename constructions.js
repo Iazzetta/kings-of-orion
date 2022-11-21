@@ -8,12 +8,12 @@ export const Constructions = [
         "level": 1,
         "collect": 50,
         "storage": 200,
-        "delay_farm": 5,
+        "delay_farm": 1,
         "power": 10,
         "req_food": 0,
         "req_wood": 100,
         "req_stone": 0,
-        "building_time": 10,
+        "building_time": 1,
         "html": `
             <div class='construction food'>
                 <div class='face front'></div>
@@ -30,12 +30,12 @@ export const Constructions = [
         "level": 1,
         "collect": 50,
         "storage": 200,
-        "delay_farm": 8,
+        "delay_farm": 1,
         "power": 10,
         "req_food": 100,
         "req_wood": 0,
         "req_stone": 0, 
-        "building_time": 10,
+        "building_time": 1,
         "html": `
             <div class='construction wood'>
                 <div class='face front'></div>
@@ -52,12 +52,12 @@ export const Constructions = [
         "level": 1,
         "collect": 50,
         "storage": 200,
-        "delay_farm": 10,
+        "delay_farm": 1,
         "power": 10,
         "req_food": 100,
         "req_wood": 100,
         "req_stone": 0, 
-        "building_time": 10,
+        "building_time": 1,
         "html": `
             <div class='construction stone'>
                 <div class='face front'></div>

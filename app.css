@@ -4,10 +4,12 @@ html, body, ul, li {
     margin: 0;
 }
 body {
+    font-family: 'Quicksand', sans-serif;
     background: rgb(44,143,48);
     background: linear-gradient(357deg, rgba(44,143,48,1) 0%, rgba(113,222,117,1) 100%);
 }
 ul li { display: inline-block; }
+.fw7 { font-weight: 700; }
 
 .nav {
     display: flex;
@@ -20,57 +22,4 @@ ul li { display: inline-block; }
     background-size: contain;
     color: white;
     text-shadow: 0px 0px 11px black;
-}
-
-#map {
-    position: relative;
-    width: 600px;
-    margin: 0 auto;
-    box-shadow: 0px 0px 20px 0px #00000038;
-    border: 10px solid #235e25;
-    transform: scaleX(1.7) scaleY(1) scaleZ(0.2) 
-                rotateX(62deg) rotateY(0deg) rotateZ(339deg) 
-                translateX(-26px) translateY(37px) translateZ(0px) 
-                skewX(19deg) skewY(-26deg);
-    box-shadow: -15px 15px 0px #164016;
-}
-.block {
-    width: 50px;
-    display: inline-block;
-    height: 50px;
-    margin-right: -4px;
-    padding: 0px;
-    cursor: pointer;
-    box-shadow: inset 0px 0px 0px 1px #00000008;
-}
-.block:hover {
-    box-shadow: inset 0px 0px 0px 2px gold;
-}
-
-.construction-menu {
-    position: fixed;
-    width: 100%;
-    background: white;
-    bottom: 0px;
-    height: 220px;
-    box-shadow: 0px -4px 16px #00000036;
-}
-.construction-menu .build {
-    display: inline-block;
-    border: 1px solid black;
-    text-align: center;
-    padding: 5px;
-    margin-left: 5px;
-    margin-top: 7px;
-    margin-right: 5px;
-    cursor: pointer;
-    background: #ffffff;
-    box-shadow: 0px 0px 7px #000000a3;
-    border-radius: 4px;
-    border: 2px solid black;
-    width: 200px;
-    height: 160px;
-}
-.construction-menu .build:hover {
-    border-color: #2196f3;
 }

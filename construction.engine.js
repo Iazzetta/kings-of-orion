@@ -1,11 +1,15 @@
+import Game from "./game.js";
 import { __qs } from "./utils.js";
 
 export class ConstructionEngine {
-    constructor(construction, block_id) { 
+    constructor(construction, block_id, game) { 
         this.construction = construction
         this.collect_box = 0;
         this.type = construction.type
         this.block_id = block_id
+        this.element = __qs(`.block[id="${this.block_id}"]`);
+        this.magicid = Math.random()
+        this.game = game;
         this.init()
     }
 
@@ -23,8 +27,7 @@ export class ConstructionEngine {
                 if ((_this.collect_box + _this.construction.collect) <= _this.construction.storage) {
                     _this.collect_box += _this.construction.collect
                 } else {
-                    __qs(`.block[id="${this.block_id}"] .face.top`).innerHTML = 
-                    `<span class="collect"></span>`
+                    this.magicInfo()
                 }
             }, _this.construction.delay_farm * 1000)
 
@@ -40,6 +43,27 @@ export class ConstructionEngine {
         }
         this.collect_box = 0;
         __qs(`.block[id="${this.block_id}"] .face.top`).innerHTML = ``
+        this.destroyMagicInfo()
         return response
+    }
+
+    magicInfo () {
+        if (__qs(`.magic-info[id="${this.block_id}"]`)) return;
+        var rect = this.element.getBoundingClientRect();
+        __qs('body').insertAdjacentHTML('beforeend', `
+            <span id="${this.block_id}" style="top: ${rect.top - 10}px;left: ${rect.left + 42}px;" class="magic-info">
+                ${ this.construction.type == "food" ? '🌽':'' }
+                ${ this.construction.type == "wood" ? '🪵':'' }
+                ${ this.construction.type == "stone" ? '🪨':'' }
+                ${ this.construction.type == "gold" ? '🟡':'' }
+            </span>
+        `)
+        this.game.loadEvents();
+    }
+
+    destroyMagicInfo() {
+        try {
+            __qs(`.magic-info[id="${this.block_id}"]`).remove();
+        } catch(e) {}
     }
 }
