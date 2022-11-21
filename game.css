@@ -4,8 +4,18 @@
     height: 50px;
     overflow: hidden;
     transform: rotate(48deg);
-  }
-  .face {
+}
+#map.dd .construction {
+    transform: none;
+    overflow: initial;
+} 
+#map.dd .construction .face {
+    width: 26px;
+    height: 26px;
+    margin-top: -109px;
+    margin-left: -89px;
+}
+.face {
     transform-origin: 0 0;
     position: absolute;
     width: 25px;
@@ -30,7 +40,6 @@
 }
 
 /* Custom Constructions */
-
 .front { box-shadow: inset 0px 3px 3px #0000007a; }
 .side { box-shadow: inset -8px -3px 9px #0000007a }
 
@@ -68,14 +77,31 @@
     width: 563px;
     margin: 0 auto;
     box-shadow: 0px 0px 20px 0px #00000038;
-    border: 10px solid #235e25;
+    border: 20px solid #235e25;
     transform: scaleX(1.7) scaleY(1) scaleZ(0.2) 
                 rotateX(62deg) rotateY(0deg) rotateZ(339deg) 
                 translateX(-26px) translateY(37px) translateZ(0px) 
                 skewX(19deg) skewY(-26deg);
-    box-shadow: -15px 15px 0px #164016;
-    top: -100px;
+    /* transform: scaleX(1) scaleY(1) scaleZ(0.2) 
+        rotateX(0deg) rotateY(0deg) rotateZ(339deg) 
+        translateX(-24px) translateY(38px) translateZ(1px) 
+        skewX(-20deg) skewY(18deg); */
+    top: -50px;
+    left: 50px;
+    border-top: none;
+    border-right: none;
 }
+#map.dd {
+    /* width: 396px;
+    height: 392px;
+    padding: 2px; */
+    transform: scaleX(.6) scaleY(.6) scaleZ(.6) 
+        rotateX(0deg) rotateY(0deg) rotateZ(339deg) 
+        translateX(-22px) translateY(-190px) translateZ(1px) 
+        skewX(-20deg) skewY(18deg)!important;
+    top: 65px;
+}
+
 .block {
     width: 50px;
     display: inline-block;
@@ -90,6 +116,10 @@
 .block:hover {
     box-shadow: inset 0px 0px 0px 2px gold;
 }
+/* #map.dd .block {
+    width: 30px;
+    height: 30px;
+} */
 
 /* BUILD MENU */
 .build-menu {
@@ -112,6 +142,7 @@
     bottom: 0px;
     height: 240px;
     box-shadow: 0px -4px 16px #00000036;
+    z-index: 2;
 }
 .construction-menu .content {
     background-color: #3e2723;

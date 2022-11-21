@@ -14,7 +14,9 @@
 <body>
 
     <section id="nav" class="nav"></section>
-    <section id="map"></section>
+    <section class="world">
+        <section id="map" class="isometric"></section>
+    </section>
     <section id="construction-menu" class="construction-menu">
         <ul class="build-menu">
             <li>Basico</li>
@@ -26,6 +28,10 @@
         </ul>
         <div class="content"></div>
     </section>
+
+    <img src="./2d.svg" class="change-view" alt="Change View 2D/2.5D">
+    <div class="zoom-plus">+</div>
+    <div class="zoom-minus">-</div>
 
     <script type="module" src="app.js"></script>
 </body>

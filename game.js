@@ -3,6 +3,12 @@ import { __qs, __qsall } from './utils.js'
 import { Constructions } from './constructions.js';
 import { ConstructionEngine } from './construction.engine.js';
 
+let zoomX = 1.7;
+let zoomY = 1;
+let zoomZ = 0.2;
+let selectedView = 'isometric';
+
+
 export default class Game {
     constructor(gameData) {
         this.data = gameData
@@ -62,29 +68,99 @@ export default class Game {
 
     loadEvents() {
         let _this = this;
-        __qsall('.block:not(.loaded)').forEach((el) => {
-            el.addEventListener( 'click', (e) => {
+
+        // sistema dos blocos (construcao etc)
+        if (__qsall('.block:not(.loaded)').length > 0) {
+            __qsall('.block:not(.loaded)').forEach((el) => {
                 el.classList.add('loaded')
-                let block_id = e.target.getAttribute('id')
-                if (!block_id) block_id = e.target.parentNode.parentNode.getAttribute('id');
-                _this.build(block_id)
+                el.addEventListener( 'click', (e) => {
+                    let block_id = e.target.getAttribute('id')
+                    if (!block_id) block_id = e.target.parentNode.parentNode.getAttribute('id');
+                    _this.build(block_id)
+                })
             })
-        })
-        __qsall('.magic-info:not(.loaded)').forEach((el) => {
-            el.addEventListener( 'click', (e) => {
+        }
+
+        // magic info - icones animados em cima dos blocos
+        if (__qsall('.magic-info:not(.loaded)').length > 0) {
+            __qsall('.magic-info:not(.loaded)').forEach((el) => {
                 el.classList.add('loaded')
-                let block_id = e.target.getAttribute('id')
-                if (!block_id) block_id = e.target.parentNode.getAttribute('id');
-                _this.build(block_id)
+                el.addEventListener( 'click', (e) => {
+                    let block_id = e.target.getAttribute('id')
+                    if (!block_id) block_id = e.target.parentNode.getAttribute('id');
+                    _this.build(block_id)
+                })
             })
-        })
-        __qsall('.select-construction:not(.loaded)').forEach((el) => {
-            el.addEventListener( 'click', (e) => {
+        }
+
+        // seleção do construtor
+        if (__qsall('.select-construction:not(.loaded)').length > 0) {
+            __qsall('.select-construction:not(.loaded)').forEach((el) => {
                 el.classList.add('loaded')
-                // if (el !== e.target) return;
-                _this.selectConstruction(e.target.getAttribute('id'))
+                el.addEventListener( 'click', (e) => {
+                    // if (el !== e.target) return;
+                    _this.selectConstruction(e.target.getAttribute('id'))
+                })
             })
-        })
+        }
+
+        // change view (isometric/2d)
+        if (__qs('.change-view:not(.loaded)')) {
+            __qs('.change-view:not(.loaded)').addEventListener('click', (e) => {
+                if (__qs('#map').classList.contains('dd')) {
+                    __qs('#map').classList.remove('dd')
+                    selectedView = 'isometric'
+                } else {
+                    __qs('#map').classList.add('dd')
+                    selectedView = '2d'
+                }
+                ConstructionEngine.destroyAllMagicInfo()
+                ConstructionEngine.recreateMagicInfo(_this.my_constructions)
+            })
+            __qs('.change-view:not(.loaded)').classList.add('loaded')
+        }
+
+        // zoom +
+        if (__qs('.zoom-plus:not(.loaded)')) {
+            __qs('.zoom-plus:not(.loaded)').addEventListener('click', (e) => {
+                if (selectedView == 'isometric') {
+                    zoomX += 0.1
+                    zoomY += 0.1
+                    if (zoomX >= 1.7) zoomX = 1.7
+                    if (zoomY >= 1) zoomY = 1
+                    __qs('#map').style.transform = `
+                        scaleX(${zoomX}) scaleY(${zoomY}) scaleZ(${zoomZ})
+                        rotateX(62deg) rotateY(0deg) rotateZ(339deg) 
+                        translateX(-26px) translateY(37px) translateZ(0px) 
+                        skewX(19deg) skewY(-26deg)
+                    `;
+                    ConstructionEngine.destroyAllMagicInfo()
+                    ConstructionEngine.recreateMagicInfo(_this.my_constructions)
+                }
+            })
+            __qs('.zoom-plus:not(.loaded)').classList.add('loaded')
+        }
+
+        // zoom -
+        if (__qs('.zoom-minus:not(.loaded)')) {
+            __qs('.zoom-minus:not(.loaded)').addEventListener('click', (e) => {
+                if (selectedView == 'isometric') {
+                    zoomX -= 0.1
+                    zoomY -= 0.1
+                    if (zoomX <= 1.2) zoomX = 1.2
+                    if (zoomY<= 0.5) zoomY = zoomY = 0.5
+                    __qs('#map').style.transform = `
+                        scaleX(${zoomX}) scaleY(${zoomY}) scaleZ(${zoomZ})
+                        rotateX(62deg) rotateY(0deg) rotateZ(339deg) 
+                        translateX(-26px) translateY(37px) translateZ(0px) 
+                        skewX(19deg) skewY(-26deg)
+                    `;
+                    ConstructionEngine.destroyAllMagicInfo()
+                    ConstructionEngine.recreateMagicInfo(_this.my_constructions)
+                }
+            })
+            __qs('.zoom-minus:not(.loaded)').classList.add('loaded')
+        }
     }
     cancelBuildMode() {
         __qsall(`.select-construction`).forEach((el) => { 
