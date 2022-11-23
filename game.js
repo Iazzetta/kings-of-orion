@@ -233,7 +233,7 @@ export default class Game {
     build(block_id) {
         last_block_id = block_id;
         const $block = __qs(`.block[id="${block_id}"]`);
-        this.closeConstructMenu()
+        // this.closeConstructMenu()
         if ($block) {
             const block_name = `b${block_id}`
             // check if exist any constructions
@@ -241,11 +241,14 @@ export default class Game {
                 // reset
                 // this.construction = null;
                 this.collectAll(block_name)
+                this.manageConstruction(this.my_constructions[block_name])
+                this.openInfoBox(block_id)
                 // this.cancelBuildMode(block_id)
             } else {
                 // create new construction
                 if (!this.construction) {
                     console.log('Nenhuma construção selecionada!')
+                    this.cancelBuildMode()
                     return false;
                 }
                 if (
@@ -288,12 +291,18 @@ export default class Game {
         }
     }
 
+    openInfoBox () {
+        if (!__qs('.manage-construction').classList.contains('on'))
+            __qs('.manage-construction').classList.add('on')
+    }
+
     selectConstruction(construct_id) {
         try {
             this.cancelBuildMode(construct_id)
             this.construction = Constructions.filter(x => x.id == construct_id)[0]
-            this.enableBuildMode(construct_id)
             this.manageConstruction()
+            // this.enableBuildMode(construct_id)
+            this.loadEvents()
         } catch(error) { 
             console.log(error)
             alert('Nenhuma construção selecionada!')
@@ -301,36 +310,58 @@ export default class Game {
         }
     }
 
-    manageConstruction () {
+    destroyConstruction(block_id) {
+        try {
+            const block_name = `b${block_id}`
+            if (block_name in this.my_constructions) {
+                // this.cancelBuildMode()
+                this.construction = null
+                this.my_constructions[block_name].destroy()
+                delete this.my_constructions[block_name]
+            }
+        } catch(error) { 
+            console.log(error)
+            alert('Erro ao destruir!')
+        }
+    }
+
+    manageConstruction (construction = null) {
         try { __qs('.manage-construction .cancel').removeEventListener('click', (e) => this.cancelBuildMode()) } catch(e){}
+
+        let _c = (construction ? construction.construction:this.construction)
         __qs('.manage-construction').innerHTML = `
-        <div class="build" id="${this.construction.id}">
+        <div class="build" id="${_c.id}">
             <span class="build-icon">
-                ${ buildIcon(this.construction.type) }
+                ${ buildIcon(_c.type) }
             </span>
-            <span class="fw7">${this.construction.name}</span>
+            <span class="fw7">${_c.name} <small>${construction ? '#' + construction.block_id:''}</small></span>
             <div class="info">
                 <ul>
-                    <li>+ ${this.construction.power} poder</li>
-                    ${ this.construction.delay_farm > 0 ? `
-                        <li>${buildIcon(this.construction.type)} + ${this.construction.collect}/${this.construction.delay_farm}s</li>
+                    <li>+ ${_c.power} poder</li>
+                    ${ _c.delay_farm > 0 ? `
+                        <li>${buildIcon(_c.type)} + ${_c.collect}/${_c.delay_farm}s</li>
                     `:''}
                 </ul>
-                <p>${this.construction.description}</p>
+                <p>${_c.description}</p>
                 <ul class="req-build">
-                    <li>${buildIcon("food")} ${this.construction.req_food}</li>
-                    <li>${buildIcon("wood")} ${this.construction.req_wood}</li>
-                    <li>${buildIcon("stone")} ${this.construction.req_stone}</li>
-                    <li>${buildIcon("gold")} ${this.construction.req_gold}</li>
+                    <li>${buildIcon("food")} ${_c.req_food}</li>
+                    <li>${buildIcon("wood")} ${_c.req_wood}</li>
+                    <li>${buildIcon("stone")} ${_c.req_stone}</li>
+                    <li>${buildIcon("gold")} ${_c.req_gold}</li>
                 </ul>
             </div>
             <div class="actions">
-                <button class="btn select-construction" id="${this.construction.id}">Construir</button>
+                ${!construction ? `<button class="btn select-construction" id="${_c.id}">Construir</button>`:''}
+                ${construction ? `<button class="btn destroy" id="${construction.block_id}">Destruir</button>`:''}
                 <button class="btn cancel">Fechar</button>
             </div>
         </div>
         `;
         __qs('.manage-construction .cancel').addEventListener('click', (e) => this.cancelBuildMode())
         this.closeConstructMenu()
+        let _this = this;
+        try {
+            __qs('.destroy').addEventListener('click', (e) => _this.destroyConstruction(e.target.getAttribute('id')))
+        } catch(e) {}
     }
 }

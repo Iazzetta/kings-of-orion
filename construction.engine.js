@@ -9,6 +9,7 @@ export class ConstructionEngine {
         this.element = __qs(`.block[id="${this.block_id}"]`);
         this.magicid = Math.random()
         this.game = game;
+        this.timer = null;
         this.init()
     }
 
@@ -23,7 +24,7 @@ export class ConstructionEngine {
             __qs(`.block[id="${this.block_id}"]`).classList.remove('building')
             __qs(`.block[id="${this.block_id}"]`).classList.remove('building')
             if (_this.construction.delay_farm == 0) return; //no delay, no interval :P
-            setInterval(() => {
+            _this.timer = setInterval(() => {
                 if ((_this.collect_box + _this.construction.collect) <= _this.construction.storage) {
                     _this.collect_box += _this.construction.collect
                 } else {
@@ -45,6 +46,11 @@ export class ConstructionEngine {
         __qs(`.block[id="${this.block_id}"] .face.top`).innerHTML = ``
         this.destroyMagicInfo()
         return response
+    }
+
+    destroy () {
+        clearInterval(this.timer)
+        __qs(`.block[id="${this.block_id}"]`).innerHTML = '';
     }
 
     magicInfo (block_id, type, game) {
