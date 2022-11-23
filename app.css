@@ -1,3 +1,10 @@
+* {
+    outline: none;
+    user-select: none;
+}
+::-webkit-scrollbar {
+    display: none;
+}
 html,body { height: 100%; width: 100%; }
 html, body, ul, li {
     padding: 0;
@@ -7,6 +14,7 @@ body {
     font-family: 'Quicksand', sans-serif;
     background: rgb(44,143,48);
 }
+p { margin: 5px 0px; }
 ul li { display: inline-block; }
 .fw7 { font-weight: 700; }
 
@@ -27,30 +35,48 @@ ul li { display: inline-block; }
 
 .world {
     width: 1500px;
-    height: 700px;
+    height: 1000px;
+    max-width: 100%;
     overflow: scroll;
     margin: 0 auto;
     background: linear-gradient(357deg, rgba(44,143,48,1) 0%, rgba(113,222,117,1) 100%);
 }
 
-.change-view {
+.change-view, .zoom-plus, .zoom-minus {
     position: fixed;
-    top: 50px;
+    cursor: pointer;
+}
+.change-view {
+    top: 61px;
     left: 7px;
-    width: 50px;
-    height: 50px;
+    width: 37px;
+    height: 37px;
 }
 .zoom-plus {
-    position: fixed;
-    top: 100px;
+    top: 47px;
     font-size: 50px;
-    left: 7px;
-    cursor: pointer;
+    left: 61px;
 }
 .zoom-minus {
-    position: fixed;
-    top: 100px;
+    top: 47px;
     font-size: 50px;
-    left: 50px;
+    left: 110px;
+}
+
+.nav-stats li {
+    margin-right: 5px;
+    background-color: #ffffff17;
+}
+
+.btn {
+    padding: 5px 10px;
+    background-color: #4caf50;
+    border: 2px solid #388e3c;
+    border-radius: 6px;
+    box-shadow: 0px 0px 8px #00000054;
     cursor: pointer;
+}
+.btn.cancel {
+    background-color: #f44336;
+    border: 2px solid #b71c1c;
 }

@@ -1,4 +1,4 @@
-import { __qs, __qsall } from "./utils.js";
+import { __qs, __qsall, buildIcon } from "./utils.js";
 
 export class ConstructionEngine {
     constructor(construction, block_id, game) { 
@@ -14,14 +14,15 @@ export class ConstructionEngine {
 
     init () {
         console.log(`Construindo em ${this.construction.building_time} segundos...`)
-        __qs(`.block[id="${this.block_id}"] .face.top`).classList.add('building')
-        __qs(`.block[id="${this.block_id}"] .face.side`).classList.add('building')
-        __qs(`.block[id="${this.block_id}"] .face.front`).classList.add('building')
+        __qs(`.block[id="${this.block_id}"]`).classList.add('building')
+        __qs(`.block[id="${this.block_id}"]`).classList.add('building')
+        __qs(`.block[id="${this.block_id}"]`).classList.add('building')
         const _this = this
         setTimeout(() => {
-            __qs(`.block[id="${this.block_id}"] .face.top`).classList.remove('building')
-            __qs(`.block[id="${this.block_id}"] .face.side`).classList.remove('building')
-            __qs(`.block[id="${this.block_id}"] .face.front`).classList.remove('building')
+            __qs(`.block[id="${this.block_id}"]`).classList.remove('building')
+            __qs(`.block[id="${this.block_id}"]`).classList.remove('building')
+            __qs(`.block[id="${this.block_id}"]`).classList.remove('building')
+            if (_this.construction.delay_farm == 0) return; //no delay, no interval :P
             setInterval(() => {
                 if ((_this.collect_box + _this.construction.collect) <= _this.construction.storage) {
                     _this.collect_box += _this.construction.collect
@@ -51,11 +52,8 @@ export class ConstructionEngine {
         var rect = __qs(`.block[id="${block_id}"]`).getBoundingClientRect();
         const dd_view = __qs('#map').classList.contains('dd')
         __qs('body').insertAdjacentHTML('beforeend', `
-            <span id="${block_id}" style="top: ${rect.top - 10}px;left: ${rect.left + 42 + (dd_view ? -40:0)}px;" class="magic-info">
-                ${ type == "food" ? '🌽':'' }
-                ${ type == "wood" ? '🪵':'' }
-                ${ type == "stone" ? '🪨':'' }
-                ${ type == "gold" ? '🟡':'' }
+            <span id="${block_id}" style="top: ${rect.top - 10}px;left: ${rect.left + 40 + (dd_view ? -40:0)}px;" class="magic-info">
+                ${ buildIcon(type) }
             </span>
         `)
         game.loadEvents();
@@ -73,9 +71,11 @@ export class ConstructionEngine {
         } catch(e) {}
     }
     static recreateMagicInfo(constructions) {
+        try {
+            __qsall(`.magic-info`).forEach(el => el.remove())
+        } catch(e) {}
         for (let key in constructions) {
             const block_id = Number(key.replace('b', ''))
-            console.log(constructions[key])
             if (constructions[key].collect_box == constructions[key].construction.storage) {
                 this.prototype.magicInfo(block_id, constructions[key].construction.type, constructions[key].game)
             }

@@ -1,4 +1,4 @@
-import { __qs, __qsall } from './utils.js'
+import { buildIcon, __qs, __qsall, nFormatter } from './utils.js'
 
 import { Constructions } from './constructions.js';
 import { ConstructionEngine } from './construction.engine.js';
@@ -7,6 +7,7 @@ let zoomX = 1.7;
 let zoomY = 1;
 let zoomZ = 0.2;
 let selectedView = 'isometric';
+let last_block_id = 1;
 
 
 export default class Game {
@@ -24,12 +25,15 @@ export default class Game {
         const $nav = __qs('#nav')
         $nav.innerHTML = `
             <div>${this.data.name}</div>
-            <ul>
-                <li id="food">🌽 ${this.data.food} alimentos</li>
-                <li id="wood">🪵 ${this.data.wood} madeiras</li>
-                <li id="stone">🪨 ${this.data.stone} pedras</li>
-                <li id="gold">🟡 ${this.data.gold} ouro</li>
-                <li id="diamond">💎 ${this.data.diamond} diamante</li>
+            <ul class="nav-stats">
+                <li id="food" title="alimentos">${buildIcon('food')} ${nFormatter(this.data.food, 1)}</li>
+                <li id="wood" title="madeiras">${buildIcon('wood')} ${nFormatter(this.data.wood, 1)}</li>
+                <li id="stone" title="pedras">${buildIcon('stone')} ${nFormatter(this.data.stone, 1)}</li>
+                <li id="gold" title="ouros">${buildIcon('gold')} ${nFormatter(this.data.gold, 1)}</li>
+                <li id="gold" title="guerreiros">${buildIcon('warrior')} ${nFormatter(this.data.warrior, 1)}</li>
+                <li id="gold" title="arqueiros">${buildIcon('archer')} ${nFormatter(this.data.archer, 1)}</li>
+                <li id="gold" title="defensores">${buildIcon('defensor')} ${nFormatter(this.data.defensor, 1)}</li>
+                <li id="diamond" title="diamantes">${buildIcon('diamond')} ${nFormatter(this.data.diamond)}</li>
             </ul>
         `
     }
@@ -50,17 +54,15 @@ export default class Game {
                 <div class="build" id="${Constructions[i].id}">
                     <div class="fw7">${Constructions[i].name}</div>
                     <span class="build-icon">
-                        ${ Constructions[i].type == "food" ? '🌽':'' }
-                        ${ Constructions[i].type == "wood" ? '🪵':'' }
-                        ${ Constructions[i].type == "stone" ? '🪨':'' }
-                        ${ Constructions[i].type == "gold" ? '🟡':'' }
+                        ${ buildIcon(Constructions[i].type) }
                     </span>
                     <ul class="req-build">
-                        <li>🌽 ${Constructions[i].req_food}</li>
-                        <li>🪵 ${Constructions[i].req_wood}</li>
-                        <li>🪨 ${Constructions[i].req_stone}</li>
+                        <li>${buildIcon("food")} ${Constructions[i].req_food}</li>
+                        <li>${buildIcon("wood")} ${Constructions[i].req_wood}</li>
+                        <li>${buildIcon("stone")} ${Constructions[i].req_stone}</li>
+                        <li>${buildIcon("gold")} ${Constructions[i].req_gold}</li>
                     </ul>
-                    <button class="select-construction" id="${Constructions[i].id}">Construir</button>
+                    <button class="btn select-construction" id="${Constructions[i].id}">Construir</button>
                 </div>
             `
         }
@@ -73,10 +75,22 @@ export default class Game {
         if (__qsall('.block:not(.loaded)').length > 0) {
             __qsall('.block:not(.loaded)').forEach((el) => {
                 el.classList.add('loaded')
-                el.addEventListener( 'click', (e) => {
+                let clicking = false;
+                el.addEventListener( 'mousedown', (e) => {
                     let block_id = e.target.getAttribute('id')
                     if (!block_id) block_id = e.target.parentNode.parentNode.getAttribute('id');
                     _this.build(block_id)
+                    clicking = true;
+                })
+                el.addEventListener('mouseup', (e) => {
+                    clicking = false;
+                })
+                el.addEventListener('mouseover', (e) => {
+                    if(e.buttons == 1 || e.buttons == 3){
+                        let block_id = e.target.getAttribute('id')
+                        if (!block_id) block_id = e.target.parentNode.parentNode.getAttribute('id');
+                        _this.build(block_id)
+                    }
                 })
             })
         }
@@ -114,7 +128,6 @@ export default class Game {
                     __qs('#map').classList.add('dd')
                     selectedView = '2d'
                 }
-                ConstructionEngine.destroyAllMagicInfo()
                 ConstructionEngine.recreateMagicInfo(_this.my_constructions)
             })
             __qs('.change-view:not(.loaded)').classList.add('loaded')
@@ -134,7 +147,6 @@ export default class Game {
                         translateX(-26px) translateY(37px) translateZ(0px) 
                         skewX(19deg) skewY(-26deg)
                     `;
-                    ConstructionEngine.destroyAllMagicInfo()
                     ConstructionEngine.recreateMagicInfo(_this.my_constructions)
                 }
             })
@@ -155,63 +167,111 @@ export default class Game {
                         translateX(-26px) translateY(37px) translateZ(0px) 
                         skewX(19deg) skewY(-26deg)
                     `;
-                    ConstructionEngine.destroyAllMagicInfo()
                     ConstructionEngine.recreateMagicInfo(_this.my_constructions)
                 }
             })
             __qs('.zoom-minus:not(.loaded)').classList.add('loaded')
         }
+
+        if (__qs('body:not(.listening)')) {
+            window.addEventListener('scroll', (e) => ConstructionEngine.recreateMagicInfo(_this.my_constructions))
+            window.addEventListener('resize', (e) => ConstructionEngine.recreateMagicInfo(_this.my_constructions))
+            __qs('body:not(.listening)').addEventListener('touchend', (e) => ConstructionEngine.recreateMagicInfo(_this.my_constructions))
+            __qs('body:not(.listening)').classList.add('listening')
+        }
+        
+        // open/close construction menu
+        if (__qs('.build-menu:not(.loaded)')) {
+            __qs('.build-menu').addEventListener('click', (e) => {
+                _this.toggleConstructMenu()
+            })
+            __qs('.build-menu').classList.add('loaded')
+        }
+    }
+
+    toggleConstructMenu () {
+        if (__qs('.build-menu').classList.contains('on')) {
+            __qs('.construction-menu').style.height = '400px';
+            __qs('.build-menu').classList.remove('on')
+        } else {
+            __qs('.construction-menu').style.height = '45px';
+            __qs('.build-menu').classList.add('on')
+            // __qs(`.block[id="${last_block_id}"]`).scrollTo({top: 0, left: 0, behavior: 'smooth'});
+            __qs(`.block[id="${last_block_id}"]`).scrollIntoView({
+                behavior: 'auto',
+                block: 'center',
+                inline: 'center'
+            });
+        }
+    }
+    closeConstructMenu () {
+        __qs('.construction-menu').style.height = '45px';
+        __qs('.build-menu').classList.add('on')
+        // __qs(`.block[id="${last_block_id}"]`).scrollTo({top: 0, left: 0, behavior: 'smooth'});
+        __qs(`.block[id="${last_block_id}"]`).scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'center'
+        });
     }
     cancelBuildMode() {
+        this.construction = null;
         __qsall(`.select-construction`).forEach((el) => { 
             el.classList.remove('waiting-build')
             el.innerText = 'Construir'
         })
         __qsall('.block').forEach((el) => el.classList.remove('to-build'))
+        __qs('.manage-construction').classList.remove('on')
     }
     enableBuildMode(construct_id) {
         __qs(`.select-construction[id="${construct_id}"]`).classList.add('waiting-build')
         __qs(`.select-construction[id="${construct_id}"]`).innerText = 'Selecione a região';
         __qsall('.block').forEach((el) => el.classList.add('to-build'))
+        __qs('.manage-construction').classList.add('on')
     }
 
     build(block_id) {
-        const block_name = `b${block_id}`
-        // check if exist any constructions
-        if (this.my_constructions[block_name]) {
-            // reset
-            this.construction = null;
-            this.collectAll(block_name)
-            this.cancelBuildMode(block_id)
-        } else {
-            // create new construction
-            if (!this.construction) {
-                console.log('Nenhuma construção selecionada!')
-                return false;
-            }
-            if (
-                this.construction.req_food <= this.data.food && 
-                this.construction.req_wood <= this.data.wood && 
-                this.construction.req_stone <= this.data.stone
-            ) {
-                // buy
-                this.data.food -= this.construction.req_food
-                this.data.wood -= this.construction.req_wood
-                this.data.stone -= this.construction.req_stone
-    
-                // draw
-                const html = this.construction.html
-                __qs(`.block[id="${block_id}"]`).innerHTML = this.construction.html
-    
-                // save
-                this.my_constructions[block_name] = new ConstructionEngine(this.construction, block_id, this)
-    
+        last_block_id = block_id;
+        const $block = __qs(`.block[id="${block_id}"]`);
+        this.closeConstructMenu()
+        if ($block) {
+            const block_name = `b${block_id}`
+            // check if exist any constructions
+            if (this.my_constructions[block_name]) {
+                // reset
+                // this.construction = null;
+                this.collectAll(block_name)
+                // this.cancelBuildMode(block_id)
             } else {
-                this.cancelBuildMode()
+                // create new construction
+                if (!this.construction) {
+                    console.log('Nenhuma construção selecionada!')
+                    return false;
+                }
+                if (
+                    this.construction.req_food <= this.data.food && 
+                    this.construction.req_wood <= this.data.wood && 
+                    this.construction.req_stone <= this.data.stone
+                ) {
+                    // buy
+                    this.data.food -= this.construction.req_food
+                    this.data.wood -= this.construction.req_wood
+                    this.data.stone -= this.construction.req_stone
+        
+                    // draw
+                    const html = this.construction.html
+                    __qs(`.block[id="${block_id}"]`).innerHTML = this.construction.html
+        
+                    // save
+                    this.my_constructions[block_name] = new ConstructionEngine(this.construction, block_id, this)
+        
+                } else {
+                    this.cancelBuildMode()
+                }
             }
+            // update info
+            this.updateInfo()
         }
-        // update info
-        this.updateInfo()
     }
 
     collectAll (block_name) {
@@ -220,9 +280,7 @@ export default class Game {
             if (another_block.type == this.my_constructions[block_name].type) {
                 const result = this.my_constructions[key].collect()
                 if (result) {
-                    if (result.type == 'food') this.data.food += result.collect
-                    if (result.type == 'wood') this.data.wood += result.collect
-                    if (result.type == 'stone') this.data.stone += result.collect
+                    this.data[result.type] += result.collect
                 } else {
                     console.log('Nada para colher ainda...')
                 }
@@ -232,12 +290,47 @@ export default class Game {
 
     selectConstruction(construct_id) {
         try {
+            this.cancelBuildMode(construct_id)
             this.construction = Constructions.filter(x => x.id == construct_id)[0]
             this.enableBuildMode(construct_id)
+            this.manageConstruction()
         } catch(error) { 
             console.log(error)
             alert('Nenhuma construção selecionada!')
             this.cancelBuildMode()
         }
+    }
+
+    manageConstruction () {
+        try { __qs('.manage-construction .cancel').removeEventListener('click', (e) => this.cancelBuildMode()) } catch(e){}
+        __qs('.manage-construction').innerHTML = `
+        <div class="build" id="${this.construction.id}">
+            <span class="build-icon">
+                ${ buildIcon(this.construction.type) }
+            </span>
+            <span class="fw7">${this.construction.name}</span>
+            <div class="info">
+                <ul>
+                    <li>+ ${this.construction.power} poder</li>
+                    ${ this.construction.delay_farm > 0 ? `
+                        <li>${buildIcon(this.construction.type)} + ${this.construction.collect}/${this.construction.delay_farm}s</li>
+                    `:''}
+                </ul>
+                <p>${this.construction.description}</p>
+                <ul class="req-build">
+                    <li>${buildIcon("food")} ${this.construction.req_food}</li>
+                    <li>${buildIcon("wood")} ${this.construction.req_wood}</li>
+                    <li>${buildIcon("stone")} ${this.construction.req_stone}</li>
+                    <li>${buildIcon("gold")} ${this.construction.req_gold}</li>
+                </ul>
+            </div>
+            <div class="actions">
+                <button class="btn select-construction" id="${this.construction.id}">Construir</button>
+                <button class="btn cancel">Fechar</button>
+            </div>
+        </div>
+        `;
+        __qs('.manage-construction .cancel').addEventListener('click', (e) => this.cancelBuildMode())
+        this.closeConstructMenu()
     }
 }

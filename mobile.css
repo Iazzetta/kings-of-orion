@@ -1,0 +1,26 @@
+@media (max-width: 950px) {
+    .nav {
+        display: block;
+    }
+    .nav-stats {
+        font-size: 12px;
+    }
+    .construction-menu .build {
+        width: calc(100% - 20px);
+    }
+    #map {
+        left: 300px;
+    }
+    #map.dd {
+        top: 120px;
+        left: 60px;
+    }
+    .manage-construction {
+        bottom: 0;
+        width: calc(100% - 32px);
+        right: 0;
+        height: 200px;
+        top: initial;
+        left: 0;
+    }
+}
