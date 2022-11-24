@@ -9,6 +9,8 @@ export class ConstructionEngine {
         this.element = __qs(`.block[id="${this.block_id}"]`);
         this.magicid = Math.random()
         this.game = game;
+        this.building = true;
+        this.buildingInterval = null;
         this.timer = null;
         this.init()
     }
@@ -19,13 +21,30 @@ export class ConstructionEngine {
         __qs(`.block[id="${this.block_id}"]`).classList.add('building')
         __qs(`.block[id="${this.block_id}"]`).classList.add('building')
         const _this = this
-        setTimeout(() => {
-            __qs(`.block[id="${this.block_id}"]`).classList.remove('building')
-            __qs(`.block[id="${this.block_id}"]`).classList.remove('building')
-            __qs(`.block[id="${this.block_id}"]`).classList.remove('building')
-            _this.work()
-
+        this.buildingInterval = setTimeout(() => {
+            _this.finishBuild()
         }, this.construction.building_time * 1000)
+    }
+
+    finishBuild () {
+        const _this = this;
+        try {
+            __qs(`.block[id="${_this.block_id}"]`).classList.remove('building')
+            __qs(`.block[id="${_this.block_id}"]`).classList.remove('building')
+            __qs(`.block[id="${_this.block_id}"]`).classList.remove('building')
+            __qs(`.manage-construction .finish-build[id="${_this.block_id}"]`).remove();
+        } catch(e) {}
+        this.building = false;
+        this.work()
+    }
+
+    buyFastBuild(diamond) {
+        if (this.construction.finish_build <= diamond) {
+            clearTimeout(this.buildingInterval)
+            this.finishBuild()
+            return diamond - this.construction.finish_build
+        }
+        return diamond;
     }
 
     work () {
@@ -38,21 +57,27 @@ export class ConstructionEngine {
             } else {
                 _this.magicInfo(_this.block_id, _this.type, _this.game)
                 clearInterval(_this.timer)
+                _this.timer = null;
             }
         }, this.construction.delay_farm * 1000)
     }
 
     collect () {
+        if (this.construction.delay_farm == 0) return;
+        if (this.building) return;
         const _c = this.collect_box
         const _t = this.type
         const response = {
             "collect": _c,
-            "type": _t
+            "type": _t,
+            "block_id": this.block_id,
         }
         this.collect_box = 0;
-        __qs(`.block[id="${this.block_id}"] .face.top`).innerHTML = ``
+        if (!this.timer) this.work()
         this.destroyMagicInfo()
-        this.work()
+        try {
+            __qs(`.block[id="${this.block_id}"] .face.top`).innerHTML = ``
+        } catch(e) {}
         return response
     }
 
@@ -66,11 +91,25 @@ export class ConstructionEngine {
         var rect = __qs(`.block[id="${block_id}"]`).getBoundingClientRect();
         const dd_view = __qs('#map').classList.contains('dd')
         __qs('body').insertAdjacentHTML('beforeend', `
-            <span id="${block_id}" style="top: ${rect.top - 10}px;left: ${rect.left + 40 + (dd_view ? -40:0)}px;" class="magic-info">
+            <span class="magic-info" id="${block_id}" style="top: ${rect.top - 10}px;left: ${rect.left + 40 + (dd_view ? -40:0)}px;">
                 ${ buildIcon(type) }
             </span>
         `)
         game.loadEvents();
+    }
+
+    static collectedAmount (block_id, amount) {
+        if (__qs(`.collected-info[id="${block_id}"]`)) return;
+        var rect = __qs(`.block[id="${block_id}"]`).getBoundingClientRect();
+        const dd_view = __qs('#map').classList.contains('dd')
+        __qs('body').insertAdjacentHTML('beforeend', `
+            <span class="collected-info" id="${block_id}" style="top: ${rect.top - 10}px;left: ${rect.left + 40 + (dd_view ? -40:0)}px;">
+                +${ amount }
+            </span>
+        `)
+        setTimeout(() => {
+            __qs(`.collected-info[id="${block_id}"]`).remove()
+        }, 800)
     }
 
     destroyMagicInfo() {

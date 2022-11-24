@@ -47,18 +47,18 @@ ul li { display: inline-block; }
     cursor: pointer;
 }
 .change-view {
-    top: 61px;
+    top: 66px;
     left: 7px;
     width: 37px;
     height: 37px;
 }
 .zoom-plus {
-    top: 47px;
+    top: 52px;
     font-size: 50px;
     left: 61px;
 }
 .zoom-minus {
-    top: 47px;
+    top: 52px;
     font-size: 50px;
     left: 110px;
 }
@@ -79,4 +79,26 @@ ul li { display: inline-block; }
 .btn.cancel {
     background-color: #f44336;
     border: 2px solid #b71c1c;
+}
+
+/* Notify */
+
+.notify {
+    position: fixed;
+    top: 71px;
+    left: 160px;
+    padding: 5px 12px;
+    color: white;
+    text-shadow: 0px 0px 3px black;
+    border-radius: 4px;
+    box-shadow: 0px 0px 3px black;
+}
+
+.notify.error {
+    background-color: red;
+}
+.notify.ok {
+    background-color: #a5d6a7;
+    text-shadow: none;
+    color: black;
 }

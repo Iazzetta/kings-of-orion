@@ -4,6 +4,7 @@
     }
     .nav-stats {
         font-size: 12px;
+        text-align: center;
     }
     .construction-menu .build {
         width: calc(100% - 20px);
@@ -22,5 +23,19 @@
         height: 200px;
         top: initial;
         left: 0;
+    }
+    .logo {
+        text-align: center;
+        font-size: 12px;
+        margin-bottom: 7px;
+    }
+    .notify {
+        z-index: 6;
+        top: 15px;
+        left: 0;
+        width: calc(100% - 24px);
+        font-size: 16px;
+        padding: 12px;
+        border-radius: 0;
     }
 }
