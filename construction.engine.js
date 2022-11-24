@@ -23,16 +23,23 @@ export class ConstructionEngine {
             __qs(`.block[id="${this.block_id}"]`).classList.remove('building')
             __qs(`.block[id="${this.block_id}"]`).classList.remove('building')
             __qs(`.block[id="${this.block_id}"]`).classList.remove('building')
-            if (_this.construction.delay_farm == 0) return; //no delay, no interval :P
-            _this.timer = setInterval(() => {
-                if ((_this.collect_box + _this.construction.collect) <= _this.construction.storage) {
-                    _this.collect_box += _this.construction.collect
-                } else {
-                    this.magicInfo(this.block_id, this.type, this.game)
-                }
-            }, _this.construction.delay_farm * 1000)
+            _this.work()
 
         }, this.construction.building_time * 1000)
+    }
+
+    work () {
+        if (this.construction.delay_farm == 0) return; //no delay, no interval :P
+        const _this = this;
+        clearInterval(this.timer)
+        this.timer = setInterval(() => {
+            if ((_this.collect_box + _this.construction.collect) <= _this.construction.storage) {
+                _this.collect_box += _this.construction.collect
+            } else {
+                _this.magicInfo(_this.block_id, _this.type, _this.game)
+                clearInterval(_this.timer)
+            }
+        }, this.construction.delay_farm * 1000)
     }
 
     collect () {
@@ -45,6 +52,7 @@ export class ConstructionEngine {
         this.collect_box = 0;
         __qs(`.block[id="${this.block_id}"] .face.top`).innerHTML = ``
         this.destroyMagicInfo()
+        this.work()
         return response
     }
 

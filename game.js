@@ -208,11 +208,13 @@ export default class Game {
         __qs('.construction-menu').style.height = '45px';
         __qs('.build-menu').classList.add('on')
         // __qs(`.block[id="${last_block_id}"]`).scrollTo({top: 0, left: 0, behavior: 'smooth'});
-        __qs(`.block[id="${last_block_id}"]`).scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
-            inline: 'center'
-        });
+        if (__qs(`.block[id="${last_block_id}"]`)) {
+            __qs(`.block[id="${last_block_id}"]`).scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+                inline: 'center'
+            });
+        }
     }
     cancelBuildMode() {
         this.construction = null;
@@ -274,6 +276,11 @@ export default class Game {
             }
             // update info
             this.updateInfo()
+            // reset
+            const _this = this;
+            setTimeout(() => {
+                ConstructionEngine.recreateMagicInfo(_this.my_constructions)
+            }, 500)
         }
     }
 

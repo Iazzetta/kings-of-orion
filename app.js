@@ -7,10 +7,10 @@ const game = new Game({
     exp: 0,
 
     // recursos
-    food: 1000000,
-    wood: 1000000,
-    stone: 1000000,
-    gold: 1000000,
+    food: 1000,
+    wood: 1000,
+    stone: 1000,
+    gold: 1000,
 
     // soldiers
     warrior: 1000000,
