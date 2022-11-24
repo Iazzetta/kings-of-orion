@@ -23,10 +23,11 @@ export default class Game {
 
     updateInfo () {
         const $nav = __qs('#nav')
+        const power = this.data.warrior + this.data.archer + this.data.defensor
         $nav.innerHTML = `
             <div class="logo">Kings of Orion</div>
             <ul class="nav-stats">
-                <li id="food" title="poder">${buildIcon('power')} ${nFormatter(this.data.power, 1)}</li>
+                <li id="food" title="poder">${buildIcon('power')} ${nFormatter(power , 1)}</li>
                 <li id="food" title="alimentos">${buildIcon('food')} ${nFormatter(this.data.food, 1)}</li>
                 <li id="wood" title="madeiras">${buildIcon('wood')} ${nFormatter(this.data.wood, 1)}</li>
                 <li id="stone" title="pedras">${buildIcon('stone')} ${nFormatter(this.data.stone, 1)}</li>
@@ -180,6 +181,11 @@ export default class Game {
             window.addEventListener('scroll', (e) => ConstructionEngine.recreateMagicInfo(_this.my_constructions))
             window.addEventListener('resize', (e) => ConstructionEngine.recreateMagicInfo(_this.my_constructions))
             __qs('body:not(.listening)').addEventListener('touchend', (e) => ConstructionEngine.recreateMagicInfo(_this.my_constructions))
+            __qs('body:not(.listening)').addEventListener('keypress', (e) => {
+                if (e.key == 'b') {
+                    _this.toggleConstructMenu()
+                }
+            })
             __qs('body:not(.listening)').classList.add('listening')
         }
         
@@ -244,7 +250,7 @@ export default class Game {
             // check if exist any constructions
             if (this.my_constructions[block_name]) {
                 // reset
-                this.cancelBuildMode()
+                // this.cancelBuildMode()
                 this.collectAll(block_name)
                 this.manageConstruction(this.my_constructions[block_name])
                 this.openInfoBox(block_id)
@@ -265,6 +271,7 @@ export default class Game {
                 this.data.food -= this.construction.req_food
                 this.data.wood -= this.construction.req_wood
                 this.data.stone -= this.construction.req_stone
+                this.data.gold -= this.construction.req_gold
     
                 // draw
                 const html = this.construction.html
