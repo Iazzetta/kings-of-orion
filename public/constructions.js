@@ -19,10 +19,8 @@ export const Constructions = [
         "req_gold": 0, 
         "building_time": 10,
         "html": `
-            <div class='construction food'>
-                <div class='face front'></div>
-                <div class='face side'></div>
-                <div class='face top'></div>
+            <div class='construction corn image-block'>
+                <div class="svg-image"><img src="/constructions/corn.svg"></div>
             </div>
         `
     },
@@ -69,10 +67,8 @@ export const Constructions = [
         "req_gold": 0, 
         "building_time": 20,
         "html": `
-            <div class='construction stone'>
-                <div class='face front'></div>
-                <div class='face side'></div>
-                <div class='face top'></div>
+            <div class='construction image-block stone'>
+                <div class="svg-image"><img src="/constructions/mining_rock.svg"></div>
             </div>
         `
     },

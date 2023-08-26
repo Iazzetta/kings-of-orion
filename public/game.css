@@ -302,3 +302,37 @@
     padding: 2px 7px;
     border-radius: 5px;
 }
+
+
+/* Image Constructions */
+.construction.image-block {
+    width: 55px;
+    position: relative;
+    left: -6px;
+    top: 11px;
+}
+.svg-image {
+    display: table;
+    font-size: 38px;
+    position: relative;
+    top: -14px;
+    transform: scaleY(2.6);
+    z-index: 3;
+    left: -3px;
+}
+.svg-image img {
+    width: 55px;
+}
+.isometric.dd .svg-image {
+    transform: none;
+}
+.isometric.dd .svg-image img {
+    width: 65px;
+}
+.construction.image-block.corn .svg-image {
+    top: -5px;
+    left: -10px
+}
+.construction.image-block.corn .svg-image img {
+    width: 65px;
+}
